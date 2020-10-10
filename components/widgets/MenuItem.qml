@@ -37,6 +37,10 @@ Rectangle {
         }
     ]
 
+    transitions: Transition {
+        ColorAnimation { duration: 200 }
+    }
+
     Text {
         id: titleText
         text: title
