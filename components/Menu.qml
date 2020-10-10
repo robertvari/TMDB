@@ -20,16 +20,22 @@ Rectangle {
         MenuItem{
             title: "Movies"
             Layout.fillWidth: true
+
+            onClicked: print("Movies clicked")
         }
 
         MenuItem{
             title: "TV Shows"
             Layout.fillWidth: true
+
+            onClicked: print("TV Shows clicked")
         }
 
         MenuItem{
             title: "People"
             Layout.fillWidth: true
+
+            onClicked: print("People clicked")
         }
     }
 }
