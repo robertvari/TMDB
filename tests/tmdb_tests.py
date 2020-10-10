@@ -7,5 +7,5 @@ if __name__ == '__main__':
     search = tmdb.Search()
     response = search.movie(query='Alien')
 
-    for s in search.results:
+    for s in search.results[:3]:
         print(s)
