@@ -30,6 +30,38 @@ Item{
             popularity: 35.354
             release_date: "2019-04-05"
         }
+
+        ListElement {
+            movie_id: 593035
+            original_title: "Alien Warfare"
+            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
+            popularity: 35.354
+            release_date: "2019-04-05"
+        }
+
+        ListElement {
+            movie_id: 593035
+            original_title: "Alien Warfare"
+            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
+            popularity: 35.354
+            release_date: "2019-04-05"
+        }
+
+        ListElement {
+            movie_id: 593035
+            original_title: "Alien Warfare"
+            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
+            popularity: 35.354
+            release_date: "2019-04-05"
+        }
+
+        ListElement {
+            movie_id: 593035
+            original_title: "Alien Warfare"
+            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
+            popularity: 35.354
+            release_date: "2019-04-05"
+        }
     }
 
     GridView {
@@ -69,6 +101,8 @@ Item{
                     Layout.fillWidth: true
                     Layout.maximumHeight: dataListView.cellHeight - 100
                     Layout.minimumHeight: dataListView.cellHeight - 100
+                    Layout.alignment: Qt.AlignTop
+
                     source: poster_path
                     fillMode: Image.PreserveAspectFit
                 }
@@ -81,7 +115,10 @@ Item{
                     color: "transparent"
 
                     ColumnLayout{
-                        width: itemTitleRect.width
+                        anchors.left: itemTitleRect.left
+                        anchors.right: itemTitleRect.right
+                        anchors.top: itemTitleRect.top
+                        anchors.margins: 5
 
                         Label{
                             text: original_title
@@ -90,10 +127,14 @@ Item{
 
                         Label{
                             text: release_date
+                            opacity: 0.5
+                            font.pixelSize: 12
                         }
 
                         Label{
                             text: popularity
+                            opacity: 0.5
+                            font.pixelSize: 12
                         }
                     }
                 }
