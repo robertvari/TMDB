@@ -14,9 +14,11 @@ Window {
         anchors.fill: parent
 
         Menu{
+            property int size: 200
+
             Layout.fillHeight: true
-            Layout.minimumWidth: 300
-            Layout.maximumWidth: 300
+            Layout.minimumWidth: size
+            Layout.maximumWidth: size
         }
 
         ThumbnailView{
