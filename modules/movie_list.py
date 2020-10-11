@@ -7,6 +7,29 @@ class MovieList(QAbstractListModel):
     def __init__(self):
         super(MovieList, self).__init__()
         self.items = []
+        self.current_page = 1
+
+    def _fetch(self):
+        for i in range(20):
+            movie_data = {
+                "movie_id": i,
+                "original_title": "Alien",
+                "poster_path": "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
+                "popularity": 75,
+                "release_date": "1979-05-25"
+            }
+            self.insert_movie(movie_data)
+
+    def insert_movie(self, movie_data):
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self.items.append(movie_data)
+        self.endInsertRows()
+
+    def edit_item(self, row, movie_data):
+        pass
+
+    def delete_item(self, row):
+        pass
 
     def rowCount(self, parent=QModelIndex):
         return len(self.items)
