@@ -9,14 +9,16 @@ class MovieList(QAbstractListModel):
         self.items = []
         self.current_page = 1
 
+        self._fetch()
+
     def _fetch(self):
         for i in range(20):
             movie_data = {
                 "movie_id": i,
-                "original_title": "Alien",
+                "original_title": "Star Wars",
                 "poster_path": "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
-                "popularity": 75,
-                "release_date": "1979-05-25"
+                "popularity": 80,
+                "release_date": "1977-05-25"
             }
             self.insert_movie(movie_data)
 

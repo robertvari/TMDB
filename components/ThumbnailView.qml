@@ -3,26 +3,13 @@ import QtQuick.Layouts 1.15
 import "widgets"
 
 Item{
-
-    ListModel {
-        id: contactModel
-
-        ListElement {
-            movie_id: 348
-            original_title: "Alien"
-            poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
-            popularity: 45.35
-            release_date: "1979-05-25"
-        }
-    }
-
     GridView {
         id: dataListView
         anchors.fill: parent
         cellWidth: 184
         cellHeight: 377
 
-        model: contactModel
+        model: MovieList
 
         delegate: Rectangle {
             id: movieItemRect
@@ -55,7 +42,7 @@ Item{
                     Layout.minimumHeight: dataListView.cellHeight - 100
                     Layout.alignment: Qt.AlignTop
 
-                    source: poster_path
+                    source: movie_item.poster_path
                     fillMode: Image.PreserveAspectFit
 
                     PopularityProgress{
@@ -63,7 +50,7 @@ Item{
                         anchors.bottom: parent.bottom
                         anchors.margins: 10
 
-                        percentage: popularity
+                        percentage: movie_item.popularity
                     }
                 }
 
@@ -81,18 +68,12 @@ Item{
                         anchors.margins: 5
 
                         Label{
-                            text: original_title
+                            text: movie_item.original_title
                             font.pixelSize: 20
                         }
 
                         Label{
-                            text: release_date
-                            opacity: 0.5
-                            font.pixelSize: 12
-                        }
-
-                        Label{
-                            text: popularity
+                            text: movie_item.release_date
                             opacity: 0.5
                             font.pixelSize: 12
                         }
