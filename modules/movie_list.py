@@ -1,6 +1,9 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
     Qt, QRunnable, QObject, QThreadPool, Signal
-import time
+import tmdbsimple as tmdb
+import os
+
+tmdb.API_KEY = os.getenv('TMDB_API_KEY')
 
 
 class MovieList(QAbstractListModel):
@@ -21,6 +24,7 @@ class MovieList(QAbstractListModel):
         self.pool.start(worker)
 
     def data_finished(self, movie_data):
+        movie_data['vote_average'] = movie_data['vote_average'] * 10
         self.insert_movie(movie_data)
 
     def insert_movie(self, movie_data):
@@ -59,16 +63,22 @@ class MovieListWorker(QRunnable):
     def __init__(self):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
+        self.moviedb_movie = tmdb.Movies()
 
     def run(self):
-        print("Downloading movie data....")
-        for i in range(20):
-            movie_data = {
-                "movie_id": 10,
-                "original_title": "Star Wars",
-                "poster_path": "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
-                "popularity": 80,
-                "release_date": "1977-05-25"
-            }
+        result = self.moviedb_movie.popular()
+
+        for movie_data in result["results"]:
+            if not movie_data.get("release_date"):
+                continue
+
+            if not movie_data.get("original_title"):
+                continue
+
+            if not movie_data.get("popularity"):
+                continue
+
+            if not movie_data.get("poster_path"):
+                continue
 
             self.signals.finished.emit(movie_data)

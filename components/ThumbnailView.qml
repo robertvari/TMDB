@@ -50,7 +50,7 @@ Item{
                         anchors.bottom: parent.bottom
                         anchors.margins: 10
 
-                        percentage: movie_item.popularity
+                        percentage: movie_item.vote_average
                     }
                 }
 
