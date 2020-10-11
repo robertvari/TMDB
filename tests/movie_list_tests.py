@@ -12,26 +12,35 @@ data_cache_folder = os.path.dirname(__file__).replace("tests", "_data_cache")
 class MovieListTests(unittest.TestCase):
 
     def test_cache_movie(self):
-        result = movie.popular()
+        if not os.path.exists(data_cache_folder):
+            os.mkdir(data_cache_folder)
 
         data_dict = {}
         data_file_name = f"db_data.json"
         file_path = os.path.join(data_cache_folder, data_file_name)
 
-        for i in result["results"]:
-            poster_url = f'{image_server}{i["poster_path"]}'
-            response = requests.get(poster_url, stream=True)
+        # check if we have data cached
+        if os.path.exists(file_path):
+            with open(file_path) as f:
+                movie_data = json.load(f)
+                print(movie_data)
+        else:
+            result = movie.popular()
 
-            if response.status_code == 200:
-                poster_file_name = i["poster_path"][1:]
-                poster_path = os.path.join(data_cache_folder, poster_file_name)
+            for i in result["results"]:
+                poster_url = f'{image_server}{i["poster_path"]}'
+                response = requests.get(poster_url, stream=True)
 
-                with open(poster_path, "wb") as f:
-                    response.raw.decode_content = True
-                    shutil.copyfileobj(response.raw, f)
+                if response.status_code == 200:
+                    poster_file_name = i["poster_path"][1:]
+                    poster_path = os.path.join(data_cache_folder, poster_file_name)
 
-            data_dict[i["id"]] = i
+                    with open(poster_path, "wb") as f:
+                        response.raw.decode_content = True
+                        shutil.copyfileobj(response.raw, f)
+
+                data_dict[i["id"]] = i
 
 
-        with open(file_path, "w") as f:
-            json.dump(data_dict, f)
+            with open(file_path, "w") as f:
+                json.dump(data_dict, f)
