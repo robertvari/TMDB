@@ -70,6 +70,8 @@ Item{
                         Label{
                             text: movie_item.original_title
                             font.pixelSize: 20
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            width: parent.width
                         }
 
                         Label{
