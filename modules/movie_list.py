@@ -16,7 +16,12 @@ class MovieList(QAbstractListModel):
         self._fetch()
 
     def _fetch(self):
-        pass
+        worker = MovieListWorker()
+        worker.signals.finished.connect(self.data_finished)
+        self.pool.start(worker)
+
+    def data_finished(self, movie_data):
+        self.insert_movie(movie_data)
 
     def insert_movie(self, movie_data):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
@@ -58,7 +63,6 @@ class MovieListWorker(QRunnable):
     def run(self):
         print("Downloading movie data....")
         for i in range(20):
-            time.sleep(1)
             movie_data = {
                 "movie_id": 10,
                 "original_title": "Star Wars",
@@ -67,5 +71,4 @@ class MovieListWorker(QRunnable):
                 "release_date": "1977-05-25"
             }
 
-            print("Finished!!")
             self.signals.finished.emit(movie_data)
