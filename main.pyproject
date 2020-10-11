@@ -1,3 +1,3 @@
 {
-    "files": ["main.qml","images/logo.png","components/ThumbnailView.qml","main.py","components/widgets/MenuItem.qml","components/widgets/Label.qml","components/Menu.qml","images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg"]
+    "files": ["components/widgets/Label.qml","components/Menu.qml","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","components/widgets/MenuItem.qml","components/ThumbnailView.qml","images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","images/logo.png","main.py","images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg","main.qml","components/widgets/PopularityProgress.qml"]
 }

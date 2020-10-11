@@ -11,56 +11,24 @@ Item{
             movie_id: 348
             original_title: "Alien"
             poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
-            popularity: 45.92
+            popularity: 45.35
             release_date: "1979-05-25"
         }
 
         ListElement {
-            movie_id: 126889
-            original_title: "Alien: Covenant"
-            poster_path: "../images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg"
-            popularity: 58.604
-            release_date: "2017-05-09"
+            movie_id: 348
+            original_title: "Alien"
+            poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
+            popularity: 75.20
+            release_date: "1979-05-25"
         }
 
         ListElement {
-            movie_id: 593035
-            original_title: "Alien Warfare"
-            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
-            popularity: 35.354
-            release_date: "2019-04-05"
-        }
-
-        ListElement {
-            movie_id: 593035
-            original_title: "Alien Warfare"
-            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
-            popularity: 35.354
-            release_date: "2019-04-05"
-        }
-
-        ListElement {
-            movie_id: 593035
-            original_title: "Alien Warfare"
-            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
-            popularity: 35.354
-            release_date: "2019-04-05"
-        }
-
-        ListElement {
-            movie_id: 593035
-            original_title: "Alien Warfare"
-            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
-            popularity: 35.354
-            release_date: "2019-04-05"
-        }
-
-        ListElement {
-            movie_id: 593035
-            original_title: "Alien Warfare"
-            poster_path: "../images/rJOj0T5DyChfECevDg0xpEGznsl.jpg"
-            popularity: 35.354
-            release_date: "2019-04-05"
+            movie_id: 348
+            original_title: "Alien"
+            poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
+            popularity: 85.78
+            release_date: "1979-05-25"
         }
     }
 
@@ -105,6 +73,14 @@ Item{
 
                     source: poster_path
                     fillMode: Image.PreserveAspectFit
+
+                    PopularityProgress{
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        anchors.margins: 10
+
+                        percentage: popularity
+                    }
                 }
 
                 // Movie title and release date
@@ -137,7 +113,7 @@ Item{
                             font.pixelSize: 12
                         }
                     }
-                }
+                }                
             }
 
             MouseArea {
