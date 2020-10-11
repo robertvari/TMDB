@@ -65,20 +65,26 @@ class MovieListWorker(QRunnable):
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
 
+    def _check_data(self, data):
+        if not data.get("release_date"):
+            return False
+
+        if not data.get("original_title"):
+            return False
+
+        if not data.get("vote_average"):
+            return False
+
+        if not data.get("poster_path"):
+            return False
+
+        return True
+
     def run(self):
         result = self.moviedb_movie.popular()
 
         for movie_data in result["results"]:
-            if not movie_data.get("release_date"):
-                continue
-
-            if not movie_data.get("original_title"):
-                continue
-
-            if not movie_data.get("popularity"):
-                continue
-
-            if not movie_data.get("poster_path"):
+            if not self._check_data(movie_data):
                 continue
 
             self.signals.finished.emit(movie_data)
