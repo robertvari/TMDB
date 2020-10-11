@@ -14,22 +14,6 @@ Item{
             popularity: 45.35
             release_date: "1979-05-25"
         }
-
-        ListElement {
-            movie_id: 348
-            original_title: "Alien"
-            poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
-            popularity: 75.20
-            release_date: "1979-05-25"
-        }
-
-        ListElement {
-            movie_id: 348
-            original_title: "Alien"
-            poster_path: "../images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg"
-            popularity: 85.78
-            release_date: "1979-05-25"
-        }
     }
 
     GridView {

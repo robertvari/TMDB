@@ -4,8 +4,10 @@ import os
 tmdb.API_KEY = os.getenv('TMDB_API_KEY')
 
 if __name__ == '__main__':
-    search = tmdb.Search()
-    response = search.movie(query='Alien')
+    movie = tmdb.Movies()
+    result = movie.popular(page=10)
 
-    for s in search.results[:3]:
-        print(s)
+    for i in result["results"]:
+        print(i)
+
+    print(result["page"], result['total_pages'], len(result["results"]))
