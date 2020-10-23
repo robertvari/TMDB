@@ -81,7 +81,8 @@ Item{
                         anchors.margins: 5
 
                         Label{
-                            text: movie_item.original_title
+                            Layout.fillWidth: true
+                            text: movie_item.title
                             font.pixelSize: 20
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             width: parent.width
@@ -103,6 +104,11 @@ Item{
 
                 onEntered: movieItemRect.state = "hovered"
                 onExited: movieItemRect.state = ""
+
+                onClicked: {
+                    MovieDetails.load(movie_item.id)
+                    root_item.state = "details"
+                }
             }
         }
     }

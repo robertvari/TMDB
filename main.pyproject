@@ -1,3 +1,3 @@
 {
-    "files": ["images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","components/widgets/Label.qml","components/widgets/MenuItem.qml","images/logo.png","main.qml","images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg","components/Menu.qml","main.py","components/ThumbnailView.qml","components/widgets/PopularityProgress.qml","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","components/widgets/Progressbar.qml"]
+    "files": ["images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","components/widgets/Label.qml","components/widgets/MenuItem.qml","images/logo.png","main.qml","components/widgets/Progressbar.qml","images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg","components/Menu.qml","main.py","components/ThumbnailView.qml","components/widgets/PopularityProgress.qml","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","components/DetailsView.qml"]
 }

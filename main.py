@@ -6,6 +6,7 @@ from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
 
 from modules.movie_list import MovieList
+from modules.movie_details import MovieDetails
 
 
 class Main:
@@ -26,6 +27,8 @@ class Main:
         self.movie_list = MovieList()
         self.context.setContextProperty("MovieList", self.movie_list)
 
+        self.movie_details = MovieDetails()
+        self.context.setContextProperty("MovieDetails", self.movie_details)
 
 
 if __name__ == "__main__":
