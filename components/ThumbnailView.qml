@@ -3,11 +3,24 @@ import QtQuick.Layouts 1.15
 import "widgets"
 
 Item{
-    GridView {
-        id: dataListView
+    ColumnLayout{
         anchors.fill: parent
+
+        Progressbar{
+            Layout.fillWidth: true
+            implicitHeight: 20
+            visible: MovieList.show_progress
+            maxValue: MovieList.max_job_count
+            value: MovieList.progress_value
+        }
+
+        GridView {
+        id: dataListView
+        Layout.fillHeight: true
+        Layout.fillWidth: true
         cellWidth: 184
         cellHeight: 377
+        clip: true
 
         model: MovieList
 
@@ -92,6 +105,8 @@ Item{
                 onExited: movieItemRect.state = ""
             }
         }
+    }
+
     }
 }
 
