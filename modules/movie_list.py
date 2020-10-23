@@ -141,11 +141,24 @@ class MovieListWorker(QRunnable):
 
                 cache_list.append(movie_data)
 
+                # get poster
                 poster_url = f'{IMAGE_SERVER}{movie_data["poster_path"]}'
                 response = requests.get(poster_url, stream=True)
 
                 if response.status_code == 200:
                     poster_file_name = movie_data["poster_path"][1:]
+                    poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
+
+                    with open(poster_path, "wb") as f:
+                        response.raw.decode_content = True
+                        shutil.copyfileobj(response.raw, f)
+
+                # get backdrop
+                poster_url = f'{IMAGE_SERVER}{movie_data["backdrop_path"]}'
+                response = requests.get(poster_url, stream=True)
+
+                if response.status_code == 200:
+                    poster_file_name = movie_data['backdrop_path'][1:]
                     poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
 
                     with open(poster_path, "wb") as f:
