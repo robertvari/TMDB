@@ -3,9 +3,39 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Item {
+    state: MovieDetails.loading
+
+    states: [
+        State {
+            name: "loading"
+            PropertyChanges {
+                target: loader
+                visible: true
+            }
+        },
+
+        State {
+            name: "loaded"
+            PropertyChanges {
+                target: root_layout
+                visible: true
+            }
+        }
+    ]
+
+    BusyIndicator {
+        id: loader
+        width: 200
+        height: 200
+        running: true
+        anchors.centerIn: parent
+        visible: false
+    }
 
     ColumnLayout{
+        id: root_layout
         width: parent.width
+        visible: false
 
         Button{
             text: "Back"
@@ -14,7 +44,7 @@ Item {
         }
 
         RowLayout{
-            Layout.fillWidth: True
+            Layout.fillWidth: true
 
             Image {
                 source: MovieDetails.poster
