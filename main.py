@@ -7,16 +7,25 @@ from PySide2.QtQml import QQmlApplicationEngine
 
 from modules.movie_list import MovieList
 
+
+class Main:
+    def __init__(self):
+        self.app = QGuiApplication(sys.argv)
+        self.engine = QQmlApplicationEngine()
+        self.context = self.engine.rootContext()
+
+        self._setup_context()
+
+        self.engine.load(os.path.join(os.path.dirname(__file__), "main.qml"))
+
+        if not self.engine.rootObjects():
+            sys.exit(-1)
+        sys.exit(self.app.exec_())
+
+    def _setup_context(self):
+        self.movie_list = MovieList()
+        self.context.setContextProperty("MovieList", self.movie_list)
+
+
 if __name__ == "__main__":
-    app = QGuiApplication(sys.argv)
-    engine = QQmlApplicationEngine()
-    context = engine.rootContext()
-
-    movie_list = MovieList()
-    context.setContextProperty("MovieList", movie_list)
-
-    engine.load(os.path.join(os.path.dirname(__file__), "main.qml"))
-
-    if not engine.rootObjects():
-        sys.exit(-1)
-    sys.exit(app.exec_())
+    Main()

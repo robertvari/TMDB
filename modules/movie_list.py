@@ -1,11 +1,12 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
-    Qt, QRunnable, QObject, QThreadPool, Signal
+    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl
 import tmdbsimple as tmdb
-import os, json
+import os, json, requests, shutil, copy
 
 tmdb.API_KEY = os.getenv('TMDB_API_KEY')
-image_server = 'https://image.tmdb.org/t/p/w300'
-data_cache_folder = os.path.dirname(__file__).replace("modules", "_data_cache")
+IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
+CACHE_FOLDER = os.path.dirname(__file__).replace("modules", "_data_cache")
+CACHE_FILE = os.path.join(CACHE_FOLDER, "db_data.json")
 
 
 class MovieList(QAbstractListModel):
@@ -26,8 +27,11 @@ class MovieList(QAbstractListModel):
         self.pool.start(worker)
 
     def data_finished(self, movie_data):
-        movie_data['vote_average'] = movie_data['vote_average'] * 10
-        self.insert_movie(movie_data)
+        data = copy.copy(movie_data)
+
+        data['vote_average'] = data['vote_average'] * 10
+        data['poster_path'] = QUrl().fromLocalFile(os.path.join(CACHE_FOLDER, data["poster_path"][1:]))
+        self.insert_movie(data)
 
     def insert_movie(self, movie_data):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
@@ -82,23 +86,43 @@ class MovieListWorker(QRunnable):
 
         return True
 
+    def _cache_data(self):
+        if not os.path.exists(CACHE_FOLDER):
+            os.makedirs(CACHE_FOLDER)
+
+        current_page = 1
+        cache_list = []
+
+        result = self.moviedb_movie.popular(page=current_page)
+        for movie_data in result["results"]:
+            if not self._check_data(movie_data):
+                continue
+
+            cache_list.append(movie_data)
+
+            # download poster
+            poster_url = f'{IMAGE_SERVER}{movie_data["poster_path"]}'
+            response = requests.get(poster_url, stream=True)
+
+            if response.status_code == 200:
+                poster_file_name = movie_data["poster_path"][1:]
+                poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
+
+                with open(poster_path, "wb") as f:
+                    response.raw.decode_content = True
+                    shutil.copyfileobj(response.raw, f)
+
+            self.signals.finished.emit(movie_data)
+
+        with open(CACHE_FILE, "w") as f:
+            json.dump(cache_list, f)
+
     def run(self):
-        cached_data = os.path.join(data_cache_folder, "db_data.json")
-        if os.path.exists(cached_data):
-            with open(cached_data) as f:
+        if os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE) as f:
                 movie_data = json.load(f)
 
-            for movie_id, data in movie_data.items():
-                if not self._check_data(data):
-                    continue
-
-                self.signals.finished.emit(data)
-
+                for data in movie_data:
+                    self.signals.finished.emit(data)
         else:
-            result = self.moviedb_movie.popular()
-
-            for movie_data in result["results"]:
-                if not self._check_data(movie_data):
-                    continue
-
-                self.signals.finished.emit(movie_data)
+            self._cache_data()
