@@ -1,7 +1,8 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
-    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property
+    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property, QSortFilterProxyModel
 import tmdbsimple as tmdb
 import os, json, requests, shutil, copy
+from datetime import datetime
 
 tmdb.API_KEY = os.getenv('TMDB_API_KEY')
 IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
@@ -58,8 +59,13 @@ class MovieList(QAbstractListModel):
 
     def data_finished(self, movie_data):
         data = copy.copy(movie_data)
+
+        date = datetime.strptime(data["release_date"], '%Y-%m-%d')
+
         data['vote_average'] = data['vote_average'] * 10
         data['poster_path'] = QUrl().fromLocalFile(os.path.join(CACHE_FOLDER, data['poster_path'][1:]))
+        data['display_date'] = date.strftime('%Y %B %d.')
+        data['sort_date'] = date
         self.insert_movie(data)
 
     def insert_movie(self, movie_data):
@@ -89,6 +95,48 @@ class MovieList(QAbstractListModel):
     show_progress = Property(bool, _is_downloading, notify=progress_changed)
     max_job_count = Property(int, _get_job_count, notify=progress_changed)
     progress_value = Property(int, _get_job_progress, notify=progress_changed)
+
+
+class MovieListProxy(QSortFilterProxyModel):
+    sort_mode_changed = Signal()
+
+    def __init__(self):
+        super(MovieListProxy, self).__init__()
+        self.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.sort(0, Qt.AscendingOrder)
+
+        self._sort_mode = "title"
+
+    def _get_mode(self):
+        return self._sort_mode
+
+    def _set_mode(self, mode):
+        if mode == self._sort_mode:
+            if self.sortOrder() == Qt.AscendingOrder:
+                self.sort(0, Qt.DescendingOrder)
+            else:
+                self.sort(0, Qt.AscendingOrder)
+        else:
+            self.sort(0, Qt.AscendingOrder)
+
+        self._sort_mode = mode
+        self.sort_mode_changed.emit()
+        self.invalidate()
+
+    def _get_mode(self):
+        return self._sort_mode
+
+    def _get_direction(self):
+        return self.sortOrder() == Qt.AscendingOrder
+
+    def lessThan(self, left, right):
+        left_data = self.sourceModel().data(left, Qt.UserRole)
+        right_data = self.sourceModel().data(right, Qt.UserRole)
+
+        return left_data[self._sort_mode] < right_data[self._sort_mode]
+
+    sort_mode = Property(str, _get_mode, _set_mode, notify=sort_mode_changed)
+    sort_direction = Property(bool, _get_direction, notify=sort_mode_changed)
 
 
 class WorkerSignals(QObject):

@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 1.4
+import "widgets"
 
 Item {
     RowLayout{
@@ -8,22 +9,25 @@ Item {
         anchors.margins: 10
         spacing: 20
 
-        Text{
+        FilterButton{
             text: "Title"
-            color: "white"
-            font.pixelSize: 16
+            state: MovieListProxy.sort_mode === "title"? "active": ""
+            onClicked: MovieListProxy.sort_mode = "title"
+            direction: MovieListProxy.sort_direction? "up":"down"
         }
 
-        Text{
+        FilterButton{
             text: "Release Date"
-            color: "white"
-            font.pixelSize: 16
+            state: MovieListProxy.sort_mode === 'sort_date'? "active": ""
+            onClicked: MovieListProxy.sort_mode = "sort_date"
+            direction: MovieListProxy.sort_direction? "up":"down"
         }
 
-        Text{
+        FilterButton{
             text: "Rating"
-            color: "white"
-            font.pixelSize: 16
+            state: MovieListProxy.sort_mode === 'vote_average'? "active": ""
+            onClicked: MovieListProxy.sort_mode = "vote_average"
+            direction: MovieListProxy.sort_direction? "up":"down"
         }
 
         Rectangle{
@@ -42,6 +46,8 @@ Item {
                 selectByMouse: true
                 selectionColor: "white"
                 selectedTextColor: "black"
+
+                onTextChanged: print(text)
             }
         }
     }

@@ -5,7 +5,7 @@ import os
 from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
 
-from modules.movie_list import MovieList
+from modules.movie_list import MovieList, MovieListProxy
 from modules.movie_details import MovieDetails
 
 
@@ -26,6 +26,10 @@ class Main:
     def _setup_context(self):
         self.movie_list = MovieList()
         self.context.setContextProperty("MovieList", self.movie_list)
+
+        self.movie_list_proxy = MovieListProxy()
+        self.movie_list_proxy.setSourceModel(self.movie_list)
+        self.context.setContextProperty("MovieListProxy", self.movie_list_proxy)
 
         self.movie_details = MovieDetails()
         self.context.setContextProperty("MovieDetails", self.movie_details)

@@ -27,7 +27,7 @@ Item{
         cellHeight: 377
         clip: true
 
-        model: MovieList
+        model: MovieListProxy
 
         delegate: Rectangle {
             id: movieItemRect
@@ -88,13 +88,13 @@ Item{
                         Label{
                             Layout.fillWidth: true
                             text: movie_item.title
-                            font.pixelSize: 20
+                            font.pixelSize: 16
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             width: parent.width
                         }
 
                         Label{
-                            text: movie_item.release_date
+                            text: movie_item.display_date
                             opacity: 0.5
                             font.pixelSize: 12
                         }
