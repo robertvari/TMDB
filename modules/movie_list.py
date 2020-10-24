@@ -4,7 +4,7 @@ import tmdbsimple as tmdb
 import os, json, requests, shutil, copy
 from datetime import datetime
 
-tmdb.API_KEY = os.getenv('TMDB_API_KEY')
+tmdb.API_KEY = '83cbec0139273280b9a3f8ebc9e35ca9'
 IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
 CACHE_FOLDER = os.path.dirname(__file__).replace("modules", "_data_cache")
 CACHE_FILE = os.path.join(CACHE_FOLDER, "db_data.json")
@@ -170,7 +170,7 @@ class MovieListWorker(QRunnable):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
-        self.max_pages = 5
+        self.max_pages = 1
 
     @staticmethod
     def _check_data(data):

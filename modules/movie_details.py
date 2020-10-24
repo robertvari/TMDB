@@ -2,7 +2,7 @@ from PySide2.QtCore import QObject, Property, QUrl, Signal, Slot, QThread
 import tmdbsimple as tmdb
 import os
 
-tmdb.API_KEY = os.getenv('TMDB_API_KEY')
+tmdb.API_KEY = '83cbec0139273280b9a3f8ebc9e35ca9'
 IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
 CACHE_FOLDER = os.path.dirname(__file__).replace("modules", "_data_cache")
 

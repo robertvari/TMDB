@@ -3,3 +3,7 @@ venv/
 _data_cache/
 
 main.pyproject.user
+
+build/
+dist/
+main.spec
