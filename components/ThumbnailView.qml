@@ -3,93 +3,115 @@ import QtQuick.Layouts 1.15
 import "widgets"
 
 Item{
-    GridView {
-        id: dataListView
+    ColumnLayout{
         anchors.fill: parent
-        cellWidth: 184
-        cellHeight: 377
 
-        model: MovieList
+        Rectangle{
+            color: "lightblue"
+            Layout.fillWidth: true
+            implicitHeight: 30
 
-        delegate: Rectangle {
-            id: movieItemRect
-            width: dataListView.cellWidth - 10
-            height: dataListView.cellHeight - 10
-            color: "transparent"
-
-            states: [
-                State {
-                    name: "hovered"
-                    PropertyChanges {
-                        target: movieItemRect
-                        color: "#444444"
-                    }
-                }
-            ]
-
-            transitions: Transition {
-                ColorAnimation { duration: 200 }
+            Text{
+                text: "Searchbar..."
+                anchors.centerIn: parent
             }
+        }
 
-            // layout
-            ColumnLayout{
-                anchors.fill: parent
+        Progressbar{
+            Layout.fillWidth: true
+            implicitHeight: 6
+        }
 
-                // poster
-                Image{
-                    Layout.fillWidth: true
-                    Layout.maximumHeight: dataListView.cellHeight - 100
-                    Layout.minimumHeight: dataListView.cellHeight - 100
-                    Layout.alignment: Qt.AlignTop
+        GridView {
+            id: dataListView
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            cellWidth: 184
+            cellHeight: 377
+            clip: true
 
-                    source: movie_item.poster_path
-                    fillMode: Image.PreserveAspectFit
+            model: MovieList
 
-                    PopularityProgress{
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.margins: 10
+            delegate: Rectangle {
+                id: movieItemRect
+                width: dataListView.cellWidth - 10
+                height: dataListView.cellHeight - 10
+                color: "transparent"
 
-                        percentage: movie_item.vote_average
-                    }
-                }
-
-                // Movie title and release date
-                Rectangle{
-                    id: itemTitleRect
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "transparent"
-
-                    ColumnLayout{
-                        anchors.left: itemTitleRect.left
-                        anchors.right: itemTitleRect.right
-                        anchors.top: itemTitleRect.top
-                        anchors.margins: 5
-
-                        Label{
-                            text: movie_item.original_title
-                            font.pixelSize: 20
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            width: parent.width
-                        }
-
-                        Label{
-                            text: movie_item.release_date
-                            opacity: 0.5
-                            font.pixelSize: 12
+                states: [
+                    State {
+                        name: "hovered"
+                        PropertyChanges {
+                            target: movieItemRect
+                            color: "#444444"
                         }
                     }
-                }                
-            }
+                ]
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
+                transitions: Transition {
+                    ColorAnimation { duration: 200 }
+                }
 
-                onEntered: movieItemRect.state = "hovered"
-                onExited: movieItemRect.state = ""
+                // layout
+                ColumnLayout{
+                    anchors.fill: parent
+
+                    // poster
+                    Image{
+                        Layout.fillWidth: true
+                        Layout.maximumHeight: dataListView.cellHeight - 100
+                        Layout.minimumHeight: dataListView.cellHeight - 100
+                        Layout.alignment: Qt.AlignTop
+
+                        source: movie_item.poster_path
+                        fillMode: Image.PreserveAspectFit
+
+                        PopularityProgress{
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.margins: 10
+
+                            percentage: movie_item.vote_average
+                        }
+                    }
+
+                    // Movie title and release date
+                    Rectangle{
+                        id: itemTitleRect
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+
+                        ColumnLayout{
+                            anchors.left: itemTitleRect.left
+                            anchors.right: itemTitleRect.right
+                            anchors.top: itemTitleRect.top
+                            anchors.margins: 5
+
+                            Label{
+                                text: movie_item.title
+                                font.pixelSize: 16
+                                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                                Layout.fillWidth: true
+                            }
+
+                            Label{
+                                text: movie_item.release_date
+                                opacity: 0.5
+                                font.pixelSize: 12
+                            }
+                        }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+
+                    onEntered: movieItemRect.state = "hovered"
+                    onExited: movieItemRect.state = ""
+                }
             }
         }
     }

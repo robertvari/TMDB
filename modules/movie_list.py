@@ -1,7 +1,7 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
-    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl
+    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property
 import tmdbsimple as tmdb
-import os, json, requests, shutil, copy
+import os, json, requests, shutil, copy, time
 
 tmdb.API_KEY = os.getenv('TMDB_API_KEY')
 IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
@@ -11,6 +11,7 @@ CACHE_FILE = os.path.join(CACHE_FOLDER, "db_data.json")
 
 class MovieList(QAbstractListModel):
     DataRole = Qt.UserRole
+    progress_changed = Signal()
 
     def __init__(self):
         super(MovieList, self).__init__()
@@ -32,17 +33,12 @@ class MovieList(QAbstractListModel):
         data['vote_average'] = data['vote_average'] * 10
         data['poster_path'] = QUrl().fromLocalFile(os.path.join(CACHE_FOLDER, data["poster_path"][1:]))
         self.insert_movie(data)
+        self.progress_changed.emit()
 
     def insert_movie(self, movie_data):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.items.append(movie_data)
         self.endInsertRows()
-
-    def edit_item(self, row, movie_data):
-        pass
-
-    def delete_item(self, row):
-        pass
 
     def rowCount(self, parent=QModelIndex):
         return len(self.items)
@@ -57,9 +53,14 @@ class MovieList(QAbstractListModel):
             MovieList.DataRole: b'movie_item'
         }
 
+    progress_value = Property(int, _get_job_progress, notify=progress_changed)
+
 
 class WorkerSignals(QObject):
     finished = Signal(dict)
+    job_started = Signal(int)
+    progress = Signal(int)
+    job_finished = Signal()
 
     def __init__(self):
         super(WorkerSignals, self).__init__()
@@ -94,6 +95,7 @@ class MovieListWorker(QRunnable):
         current_page = 1
         cache_list = []
 
+        self.signals.job_started.emit(self.max_pages * 20)
         while current_page <= self.max_pages:
             result = self.moviedb_movie.popular(page=current_page)
             for movie_data in result["results"]:
@@ -115,6 +117,7 @@ class MovieListWorker(QRunnable):
                         shutil.copyfileobj(response.raw, f)
 
                 self.signals.finished.emit(movie_data)
+                self.signals.progress.emit(len(cache_list))
 
             current_page += 1
             if current_page > result["total_pages"]:
@@ -128,7 +131,12 @@ class MovieListWorker(QRunnable):
             with open(CACHE_FILE) as f:
                 movie_data = json.load(f)
 
-                for data in movie_data:
+                self.signals.job_started.emit(len(movie_data))
+                for index, data in enumerate(movie_data):
+                    time.sleep(1)
                     self.signals.finished.emit(data)
+                    self.signals.progress(index)
         else:
             self._cache_data()
+
+        self.signals.job_finished()
