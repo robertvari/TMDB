@@ -13,7 +13,7 @@ Item{
 
         Progressbar{
             Layout.fillWidth: true
-            implicitHeight: 20
+            implicitHeight: 10
             visible: MovieList.show_progress
             maxValue: MovieList.max_job_count
             value: MovieList.progress_value

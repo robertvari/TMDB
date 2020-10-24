@@ -106,7 +106,7 @@ class MovieListWorker(QRunnable):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
-        self.max_pages = 1
+        self.max_pages = 5
 
     @staticmethod
     def _check_data(data):
