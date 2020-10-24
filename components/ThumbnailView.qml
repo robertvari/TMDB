@@ -115,6 +115,11 @@ Item{
 
                     onEntered: movieItemRect.state = "hovered"
                     onExited: movieItemRect.state = ""
+
+                    onClicked: {
+                        print(movie_item.id)
+                        root_item.state = "details"
+                    }
                 }
             }
         }

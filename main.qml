@@ -10,20 +10,46 @@ Window {
     title: qsTr("TMDB")
     color: "#141414"
 
-    RowLayout{
+    Item {
+        id: root_item
         anchors.fill: parent
 
-        Menu{
-            property int size: 200
+        states: [
+            State {
+                name: "details"
+                PropertyChanges {
+                    target: thumbnailViewLayout
+                    visible: false
+                }
 
-            Layout.fillHeight: true
-            Layout.minimumWidth: size
-            Layout.maximumWidth: size
+                PropertyChanges {
+                    target: detailsView
+                    visible: true
+                }
+            }
+        ]
+
+        RowLayout{
+            id: thumbnailViewLayout
+            anchors.fill: parent
+
+            Menu{
+                property int size: 200
+                Layout.fillHeight: true
+                Layout.minimumWidth: size
+                Layout.maximumWidth: size
+            }
+
+            ThumbnailView{
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
         }
 
-        ThumbnailView{
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        DetailsView{
+            id: detailsView
+            anchors.fill: parent
+            visible: false
         }
     }
 }
