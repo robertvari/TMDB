@@ -6,6 +6,11 @@ Item{
     ColumnLayout{
         anchors.fill: parent
 
+        SearchBar{
+            Layout.fillWidth: true
+            implicitHeight: 50
+        }
+
         Progressbar{
             Layout.fillWidth: true
             implicitHeight: 20
