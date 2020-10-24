@@ -20,12 +20,43 @@ class MovieList(QAbstractListModel):
         self.pool = QThreadPool()
         self.pool.setMaxThreadCount(1)
 
+        self._progress_max_value = 0
+        self._progress_value = 0
+        self._show_progress = False
+
         self._fetch()
 
     def _fetch(self):
         worker = MovieListWorker()
+
+        worker.signals.job_started.connect(self._job_started)
+        worker.signals.progress.connect(self._update_progress)
+        worker.signals.job_finished.connect(self._job_finished)
+
         worker.signals.finished.connect(self.data_finished)
         self.pool.start(worker)
+
+    def _job_started(self, max_count):
+        self._show_progress = True
+        self._progress_max_value = max_count
+        self.progress_changed.emit()
+
+    def _update_progress(self, value):
+        self._progress_value = value
+        self.progress_changed.emit()
+
+    def _job_finished(self):
+        self._show_progress = False
+        self.progress_changed.emit()
+
+    def _get_job_progress(self):
+        return self._progress_value
+
+    def _is_downloading(self):
+        return self._show_progress
+
+    def _get_job_count(self):
+        return self._progress_max_value
 
     def data_finished(self, movie_data):
         data = copy.copy(movie_data)
@@ -53,6 +84,8 @@ class MovieList(QAbstractListModel):
             MovieList.DataRole: b'movie_item'
         }
 
+    show_progress = Property(bool, _is_downloading, notify=progress_changed)
+    progress_max_value = Property(int, _get_job_count, notify=progress_changed)
     progress_value = Property(int, _get_job_progress, notify=progress_changed)
 
 
@@ -133,10 +166,9 @@ class MovieListWorker(QRunnable):
 
                 self.signals.job_started.emit(len(movie_data))
                 for index, data in enumerate(movie_data):
-                    time.sleep(1)
                     self.signals.finished.emit(data)
-                    self.signals.progress(index)
+                    self.signals.progress.emit(index)
         else:
             self._cache_data()
 
-        self.signals.job_finished()
+        self.signals.job_finished.emit()

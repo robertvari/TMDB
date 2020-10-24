@@ -20,6 +20,10 @@ Item{
         Progressbar{
             Layout.fillWidth: true
             implicitHeight: 6
+
+            visible: MovieList.show_progress
+            maxValue: MovieList.progress_max_value
+            value: MovieList.progress_value
         }
 
         GridView {

@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 
 Item {
     id: root
+    visible: MovieList.show_progress
 
     property int value: 50
     property int maxValue: 100
