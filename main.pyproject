@@ -1,3 +1,3 @@
 {
-    "files": ["images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg","components/widgets/PopularityProgress.qml","components/widgets/Progressbar.qml","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","components/widgets/Label.qml","components/Menu.qml","components/widgets/MenuItem.qml","main.py","images/logo.png","main.qml","components/ThumbnailView.qml","components/DetailsView.qml"]
+    "files": ["images/zecMELPbU5YMQpC81Z8ImaaXuf9.jpg","components/widgets/PopularityProgress.qml","components/widgets/Progressbar.qml","images/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg","images/rJOj0T5DyChfECevDg0xpEGznsl.jpg","components/widgets/Label.qml","components/Menu.qml","components/widgets/MenuItem.qml","main.py","images/logo.png","main.qml","components/ThumbnailView.qml","components/DetailsView.qml","components/widgets/IconButton.qml"]
 }

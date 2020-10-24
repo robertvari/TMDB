@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "widgets"
 
 Item {
 
@@ -6,10 +7,9 @@ Item {
         color: "lightblue"
         anchors.fill: parent
 
-        Text{
-            text: "Details View for: Movie Title"
-            font.pixelSize: 30
-            anchors.centerIn: parent
+        IconButton{
+            icon: ResourceLoader.get_resource('arrow-alt-circle-left.svg')
+            onClicked: root_item.state = ""
         }
     }
 }

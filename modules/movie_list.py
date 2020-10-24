@@ -1,12 +1,10 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
     Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property
 import tmdbsimple as tmdb
-import os, json, requests, shutil, copy, time
+import os, json, requests, shutil, copy
+from utilities import settings
 
-tmdb.API_KEY = os.getenv('TMDB_API_KEY')
-IMAGE_SERVER = 'https://image.tmdb.org/t/p/w300'
-CACHE_FOLDER = os.path.dirname(__file__).replace("modules", "_data_cache")
-CACHE_FILE = os.path.join(CACHE_FOLDER, "db_data.json")
+tmdb.API_KEY = settings.TMDB_API_KEY
 
 
 class MovieList(QAbstractListModel):
@@ -62,7 +60,7 @@ class MovieList(QAbstractListModel):
         data = copy.copy(movie_data)
 
         data['vote_average'] = data['vote_average'] * 10
-        data['poster_path'] = QUrl().fromLocalFile(os.path.join(CACHE_FOLDER, data["poster_path"][1:]))
+        data['poster_path'] = QUrl().fromLocalFile(os.path.join(settings.CACHE_FOLDER, data["poster_path"][1:]))
         self.insert_movie(data)
         self.progress_changed.emit()
 
@@ -122,8 +120,8 @@ class MovieListWorker(QRunnable):
         return True
 
     def _cache_data(self):
-        if not os.path.exists(CACHE_FOLDER):
-            os.makedirs(CACHE_FOLDER)
+        if not os.path.exists(settings.CACHE_FOLDER):
+            os.makedirs(settings.CACHE_FOLDER)
 
         current_page = 1
         cache_list = []
@@ -138,12 +136,12 @@ class MovieListWorker(QRunnable):
                 cache_list.append(movie_data)
 
                 # download poster
-                poster_url = f'{IMAGE_SERVER}{movie_data["poster_path"]}'
+                poster_url = f'{settings.IMAGE_SERVER}{movie_data["poster_path"]}'
                 response = requests.get(poster_url, stream=True)
 
                 if response.status_code == 200:
                     poster_file_name = movie_data["poster_path"][1:]
-                    poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
+                    poster_path = os.path.join(settings.CACHE_FOLDER, poster_file_name)
 
                     with open(poster_path, "wb") as f:
                         response.raw.decode_content = True
@@ -156,12 +154,12 @@ class MovieListWorker(QRunnable):
             if current_page > result["total_pages"]:
                 break
 
-        with open(CACHE_FILE, "w") as f:
+        with open(settings.CACHE_FILE, "w") as f:
             json.dump(cache_list, f)
 
     def run(self):
-        if os.path.exists(CACHE_FILE):
-            with open(CACHE_FILE) as f:
+        if os.path.exists(settings.CACHE_FILE):
+            with open(settings.CACHE_FILE) as f:
                 movie_data = json.load(f)
 
                 self.signals.job_started.emit(len(movie_data))
