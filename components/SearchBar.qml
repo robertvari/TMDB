@@ -47,7 +47,7 @@ Item {
                 selectionColor: "white"
                 selectedTextColor: "black"
 
-                onTextChanged: print(text)
+                onTextChanged: MovieListProxy.set_filter(text)
             }
         }
     }

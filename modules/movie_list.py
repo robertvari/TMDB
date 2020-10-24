@@ -1,5 +1,5 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
-    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property, QSortFilterProxyModel
+    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property, QSortFilterProxyModel, Slot
 import tmdbsimple as tmdb
 import os, json, requests, shutil, copy
 from datetime import datetime
@@ -102,10 +102,10 @@ class MovieListProxy(QSortFilterProxyModel):
 
     def __init__(self):
         super(MovieListProxy, self).__init__()
-        self.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.sort(0, Qt.AscendingOrder)
 
         self._sort_mode = "title"
+        self._filter = None
 
     def _get_mode(self):
         return self._sort_mode
@@ -128,6 +128,22 @@ class MovieListProxy(QSortFilterProxyModel):
 
     def _get_direction(self):
         return self.sortOrder() == Qt.AscendingOrder
+
+    @Slot(str)
+    def set_filter(self, value):
+        self._filter = value if len(value) else None
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        if not self._filter:
+            return True
+
+        index = self.sourceModel().index(sourceRow, 0, sourceParent)
+        data = index.data(Qt.UserRole)
+
+        if self._filter.lower() in data["title"].lower():
+            return True
+        return False
 
     def lessThan(self, left, right):
         left_data = self.sourceModel().data(left, Qt.UserRole)
