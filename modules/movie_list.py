@@ -70,6 +70,7 @@ class MovieListWorker(QRunnable):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
+        self.max_pages = 10
 
     def _check_data(self, data):
         if not data.get("release_date"):
@@ -93,26 +94,31 @@ class MovieListWorker(QRunnable):
         current_page = 1
         cache_list = []
 
-        result = self.moviedb_movie.popular(page=current_page)
-        for movie_data in result["results"]:
-            if not self._check_data(movie_data):
-                continue
+        while current_page <= self.max_pages:
+            result = self.moviedb_movie.popular(page=current_page)
+            for movie_data in result["results"]:
+                if not self._check_data(movie_data):
+                    continue
 
-            cache_list.append(movie_data)
+                cache_list.append(movie_data)
 
-            # download poster
-            poster_url = f'{IMAGE_SERVER}{movie_data["poster_path"]}'
-            response = requests.get(poster_url, stream=True)
+                # download poster
+                poster_url = f'{IMAGE_SERVER}{movie_data["poster_path"]}'
+                response = requests.get(poster_url, stream=True)
 
-            if response.status_code == 200:
-                poster_file_name = movie_data["poster_path"][1:]
-                poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
+                if response.status_code == 200:
+                    poster_file_name = movie_data["poster_path"][1:]
+                    poster_path = os.path.join(CACHE_FOLDER, poster_file_name)
 
-                with open(poster_path, "wb") as f:
-                    response.raw.decode_content = True
-                    shutil.copyfileobj(response.raw, f)
+                    with open(poster_path, "wb") as f:
+                        response.raw.decode_content = True
+                        shutil.copyfileobj(response.raw, f)
 
-            self.signals.finished.emit(movie_data)
+                self.signals.finished.emit(movie_data)
+
+            current_page += 1
+            if current_page > result["total_pages"]:
+                break
 
         with open(CACHE_FILE, "w") as f:
             json.dump(cache_list, f)
