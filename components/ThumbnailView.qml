@@ -117,7 +117,7 @@ Item{
                     onExited: movieItemRect.state = ""
 
                     onClicked: {
-                        print(movie_item.id)
+                        MovieDetail.load(movie_item.id)
                         root_item.state = "details"
                     }
                 }

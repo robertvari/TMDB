@@ -6,6 +6,7 @@ from PySide2.QtGui import QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine
 
 from modules.movie_list import MovieList
+from modules.movie_detail import MovieDetail
 from modules.resource_loader import ResourceLoader
 
 
@@ -29,6 +30,9 @@ class Main:
 
         self.resource_loader = ResourceLoader()
         self.context.setContextProperty("ResourceLoader", self.resource_loader)
+
+        self.movie_details = MovieDetail()
+        self.context.setContextProperty("MovieDetail", self.movie_details)
 
 
 if __name__ == "__main__":
