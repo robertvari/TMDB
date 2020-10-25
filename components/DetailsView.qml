@@ -66,8 +66,16 @@ Item {
             id: movieDetailsContainer
             Layout.fillWidth: true
             implicitHeight: moviePoster.height + 40
-            color: "gray"
+            color: "black"
             visible: true
+
+            Image{
+                source: MovieDetail.backdrop
+                anchors.fill: movieDetailsContainer
+                fillMode: Image.PreserveAspectCrop
+                opacity: 0.1
+            }
+
 
             RowLayout {
                 id: posterLayout

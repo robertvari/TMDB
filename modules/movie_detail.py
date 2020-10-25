@@ -14,6 +14,7 @@ class MovieDetail(QObject):
         super(MovieDetail, self).__init__()
 
         self._poster = None
+        self._backdrop = None
         self._title = None
         self._released_date = None
         self._genres = None
@@ -34,6 +35,8 @@ class MovieDetail(QObject):
 
     def _data_ready(self, data):
         self._poster = QUrl().fromLocalFile(os.path.join(settings.CACHE_FOLDER, data["poster_path"][1:]))
+        self._backdrop = QUrl().fromLocalFile(os.path.join(settings.CACHE_FOLDER, data["backdrop_path"][1:]))
+
         self._title = data["title"]
 
         date = datetime.strptime(data["release_date"], "%Y-%m-%d")
@@ -54,6 +57,9 @@ class MovieDetail(QObject):
 
     def _get_poster(self):
         return self._poster
+
+    def _get_backdrop(self):
+        return self._backdrop
 
     def _get_title(self):
         return self._title
@@ -77,6 +83,7 @@ class MovieDetail(QObject):
         return "loading" if self._loading else "loaded"
 
     poster = Property(QUrl, _get_poster, notify=changed)
+    backdrop = Property(QUrl, _get_backdrop, notify=changed)
     title = Property(str, _get_title, notify=changed)
     date = Property(str, _get_date, notify=changed)
     genres = Property(str, _get_genres, notify=changed)
