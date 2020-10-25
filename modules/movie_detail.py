@@ -1,12 +1,13 @@
-from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal
+from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QThread
 import tmdbsimple as tmdb
 from utilities import settings
-import os
+import os, time
 from datetime import datetime
 
 
 class MovieDetail(QObject):
     changed = Signal()
+    loader_changed = Signal()
 
     def __init__(self):
         super(MovieDetail, self).__init__()
@@ -19,10 +20,18 @@ class MovieDetail(QObject):
         self._runtime = None
         self._overview = None
 
+        self._loading = False
+
     @Slot(int)
     def load(self, movie_id):
-        data = tmdb.Movies(movie_id).info()
+        self._set_loading(True)
 
+        self.worker = GetMovieWorker()
+        self.worker.set_movie(movie_id)
+        self.worker.finished.connect(self._data_ready)
+        self.worker.start()
+
+    def _data_ready(self, data):
         self._poster = QUrl().fromLocalFile(os.path.join(settings.CACHE_FOLDER, data["poster_path"][1:]))
         self._title = data["title"]
 
@@ -34,7 +43,13 @@ class MovieDetail(QObject):
         self._tagline = data["tagline"]
         self._overview = data["overview"]
 
+        self._set_loading(False)
+
         self.changed.emit()
+
+    def _set_loading(self, value):
+        self._loading = value
+        self.loader_changed.emit()
 
     def _get_poster(self):
         return self._poster
@@ -57,6 +72,9 @@ class MovieDetail(QObject):
     def _get_overview(self):
         return self._overview
 
+    def _is_loading(self):
+        return "loading" if self._loading else "loaded"
+
     poster = Property(QUrl, _get_poster, notify=changed)
     title = Property(str, _get_title, notify=changed)
     date = Property(str, _get_date, notify=changed)
@@ -64,3 +82,25 @@ class MovieDetail(QObject):
     runtime = Property(int, _get_runtime, notify=changed)
     tagline = Property(str, _get_tagline, notify=changed)
     overview = Property(str, _get_overview, notify=changed)
+
+    loading = Property(str, _is_loading, notify=loader_changed)
+
+
+class GetMovieWorker(QThread):
+    finished = Signal(dict)
+
+    def __init__(self):
+        super(GetMovieWorker, self).__init__()
+        self._movie_id = None
+
+    def set_movie(self, movie_id):
+        self._movie_id = movie_id
+
+    def _download_backdrop(self, backdrop_path):
+        pass
+
+    def run(self):
+        data = tmdb.Movies(self._movie_id).info()
+        self._download_backdrop(data['backdrop_path'])
+
+        self.finished.emit(data)
