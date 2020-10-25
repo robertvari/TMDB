@@ -33,18 +33,9 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: 20
 
-                Rectangle{
-                    id: moviePoster
-                    implicitWidth: 300
-                    implicitHeight: 450
-                    Layout.maximumHeight: 450
-                    color: "black"
-
-                    Text{
-                        anchors.centerIn: parent
-                        text: "Poster"
-                        color: "white"
-                    }
+                Image {
+                    sourceSize: Qt.size(300, 450)
+                    source: MovieDetail.poster
                 }
 
                 ColumnLayout{
