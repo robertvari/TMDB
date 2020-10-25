@@ -1,9 +1,11 @@
 from PySide2.QtCore import QAbstractListModel, QModelIndex, \
-    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property
+    Qt, QRunnable, QObject, QThreadPool, Signal, QUrl, Property, \
+    QSortFilterProxyModel, Slot
 import tmdbsimple as tmdb
-import os, json, requests, shutil, copy
+import os, json, copy
 from utilities import settings
 from utilities.downloader import download_image
+from datetime import datetime
 
 tmdb.API_KEY = settings.TMDB_API_KEY
 
@@ -62,6 +64,10 @@ class MovieList(QAbstractListModel):
 
         data['vote_average'] = data['vote_average'] * 10
         data['poster_path'] = QUrl().fromLocalFile(os.path.join(settings.CACHE_FOLDER, data["poster_path"][1:]))
+
+        date = datetime.strptime(data["release_date"], "%Y-%m-%d")
+        data['date_display'] = date.strftime("%Y %B %d.")
+        data['date_sorting'] = date
         self.insert_movie(data)
         self.progress_changed.emit()
 
@@ -88,6 +94,56 @@ class MovieList(QAbstractListModel):
     progress_value = Property(int, _get_job_progress, notify=progress_changed)
 
 
+class MovieListProxy(QSortFilterProxyModel):
+    sort_mode_changed = Signal()
+
+    def __init__(self):
+        super(MovieListProxy, self).__init__()
+        self.sort(0, Qt.AscendingOrder)
+
+        self._filter = None
+        self._sort_mode = "title"
+
+    @Slot(str)
+    def set_filter(self, value):
+        self._filter = value if len(value) else None
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        if not self._filter:
+            return True
+
+        index = self.sourceModel().index(source_row, 0, source_parent)
+        data = index.data(Qt.UserRole)
+        if self._filter.lower() in data["title"].lower():
+            return True
+        return False
+
+    def lessThan(self, source_left, source_right):
+        left_data = self.sourceModel().data(source_left, Qt.UserRole)
+        right_data = self.sourceModel().data(source_right, Qt.UserRole)
+
+        return left_data[self._sort_mode] < right_data[self._sort_mode]
+
+    def _get_mode(self):
+        return self._sort_mode
+
+    def _set_mode(self, value):
+        if value == self._sort_mode:
+            if self.sortOrder() == Qt.AscendingOrder:
+                self.sort(0, Qt.DescendingOrder)
+            else:
+                self.sort(0, Qt.AscendingOrder)
+        else:
+            self.sort(0, Qt.AscendingOrder)
+
+        self._sort_mode = value
+        self.sort_mode_changed.emit()
+        self.invalidate()
+
+    sort_mode = Property(str, _get_mode, _set_mode, notify=sort_mode_changed)
+
+
 class WorkerSignals(QObject):
     finished = Signal(dict)
     job_started = Signal(int)
@@ -103,7 +159,7 @@ class MovieListWorker(QRunnable):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
-        self.max_pages = 1
+        self.max_pages = 5
 
     def _check_data(self, data):
         if not data.get("release_date"):

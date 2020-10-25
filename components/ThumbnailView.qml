@@ -6,15 +6,9 @@ Item{
     ColumnLayout{
         anchors.fill: parent
 
-        Rectangle{
-            color: "lightblue"
+        SearchBar{
             Layout.fillWidth: true
-            implicitHeight: 30
-
-            Text{
-                text: "Searchbar..."
-                anchors.centerIn: parent
-            }
+            implicitHeight: 50
         }
 
         Progressbar{
@@ -34,7 +28,7 @@ Item{
             cellHeight: 377
             clip: true
 
-            model: MovieList
+            model: MovieListProxy
 
             delegate: Rectangle {
                 id: movieItemRect
@@ -100,7 +94,7 @@ Item{
                             }
 
                             Label{
-                                text: movie_item.release_date
+                                text: movie_item.date_display
                                 opacity: 0.5
                                 font.pixelSize: 12
                             }
