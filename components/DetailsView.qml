@@ -34,6 +34,7 @@ Item {
                 anchors.margins: 20
 
                 Image {
+                    id: moviePoster
                     sourceSize: Qt.size(300, 450)
                     source: MovieDetail.poster
                 }
@@ -42,19 +43,19 @@ Item {
                     Layout.fillWidth: true
 
                     Text{
-                        text: "2067 (2020)"
+                        text: MovieDetail.title
                         font.pixelSize: 30
                         color: "white"
                     }
 
-                    Text{
-                        text: "2020 january 12 | Science Fiction, Thriller, Drama | 1h 54m"
+                    Text {
+                        text: MovieDetail.date +" | " + MovieDetail.genres + " | " + MovieDetail.runtime
                         font.pixelSize: 16
                         color: "white"
                     }
 
                     Text{
-                        text: "The fight for the future has begun."
+                        text: MovieDetail.tagline
                         font.pixelSize: 16
                         color: "white"
                     }
@@ -67,7 +68,7 @@ Item {
                     }
 
                     Text{
-                        text: "A lowly utility worker is called to the future by..."
+                        text: MovieDetail.overview
                         font.pixelSize: 16
                         color: "white"
                     }
