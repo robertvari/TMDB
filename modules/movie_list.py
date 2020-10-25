@@ -3,6 +3,7 @@ from PySide2.QtCore import QAbstractListModel, QModelIndex, \
 import tmdbsimple as tmdb
 import os, json, requests, shutil, copy
 from utilities import settings
+from utilities.downloader import download_image
 
 tmdb.API_KEY = settings.TMDB_API_KEY
 
@@ -102,7 +103,7 @@ class MovieListWorker(QRunnable):
         super(MovieListWorker, self).__init__()
         self.signals = WorkerSignals()
         self.moviedb_movie = tmdb.Movies()
-        self.max_pages = 10
+        self.max_pages = 1
 
     def _check_data(self, data):
         if not data.get("release_date"):
@@ -136,16 +137,7 @@ class MovieListWorker(QRunnable):
                 cache_list.append(movie_data)
 
                 # download poster
-                poster_url = f'{settings.IMAGE_SERVER}{movie_data["poster_path"]}'
-                response = requests.get(poster_url, stream=True)
-
-                if response.status_code == 200:
-                    poster_file_name = movie_data["poster_path"][1:]
-                    poster_path = os.path.join(settings.CACHE_FOLDER, poster_file_name)
-
-                    with open(poster_path, "wb") as f:
-                        response.raw.decode_content = True
-                        shutil.copyfileobj(response.raw, f)
+                download_image(movie_data["poster_path"])
 
                 self.signals.finished.emit(movie_data)
                 self.signals.progress.emit(len(cache_list))

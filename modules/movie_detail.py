@@ -1,7 +1,8 @@
 from PySide2.QtCore import QObject, Slot, Property, QUrl, Signal, QThread
 import tmdbsimple as tmdb
 from utilities import settings
-import os, time
+from utilities.downloader import download_image
+import os
 from datetime import datetime
 
 
@@ -97,7 +98,7 @@ class GetMovieWorker(QThread):
         self._movie_id = movie_id
 
     def _download_backdrop(self, backdrop_path):
-        pass
+        download_image(backdrop_path, backdrop=True)
 
     def run(self):
         data = tmdb.Movies(self._movie_id).info()
